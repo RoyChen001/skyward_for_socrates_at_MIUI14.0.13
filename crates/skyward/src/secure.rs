@@ -160,7 +160,11 @@ fn describe_hardware(wanted: &[String]) -> Result<String> {
 /// need no bundle has none to open.
 pub fn libraries() -> Result<Option<PathBuf>> {
     let Some(version) = skyward_sys::prop(VENDOR_INTERFACE) else { return Ok(None) };
-    Ok(bundle(&format!("com.android.vndk.v{version}"))?.map(|at| at.join(BUNDLE_LIBS)))
+    let found = match bundle(&format!("com.android.vndk.v{version}"))? {
+        Some(at) => Some(at),
+        None => bundle("com.android.vndk.current")?,
+    };
+    Ok(found.map(|at| at.join(BUNDLE_LIBS)))
 }
 
 /// Open the bundle of this name where it lies, and give where it is. A
@@ -170,6 +174,9 @@ fn bundle(name: &str) -> Result<Option<PathBuf>> {
     let at = Path::new(BUNDLE_MOUNT).join(name);
     if skyward_block::mount::is_mount_point(&at)? {
         return Ok(Some(at));
+    }
+    if let Some(dir) = BUNDLE_DIRS.iter().map(|d| Path::new(d).join(name)).find(|p| p.is_dir()) {
+        return Ok(Some(dir));
     }
     let Some(file) = BUNDLE_DIRS.iter().map(|d| Path::new(d).join(format!("{name}.apex"))).find(|p| p.is_file()) else {
         return Ok(None);
