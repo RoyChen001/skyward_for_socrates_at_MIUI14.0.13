@@ -4,7 +4,7 @@ brand = "Redmi"
 model = "REDMI K60 Pro"
 ab = true
 soc = { hans = "第二代骁龙®8移动平台", hant = "Snapdragon® 8 Gen 2 行動平台", en = "Snapdragon® 8 Gen 2 Mobile Platform" }
-os_version_prop = "ro.mi.os.version.incremental"
+os_version_prop = "ro.build.version.incremental"
 
 [display]
 # The M11 panel's native mode, also used by the Goodix input device.
