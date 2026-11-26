@@ -6,6 +6,16 @@ English | [简体中文](README.zh-CN.md)
 
 Skyward is a recovery written in Rust, from scratch.
 
+> [!NOTE]
+> **REDMI K60 Pro (`socrates`) — MIUI 14.0.13 (Android 13) Fork**
+>
+> This fork adapts [kirklin/skyward](https://github.com/kirklin/skyward) to build and run on **REDMI K60 Pro (`socrates`)** with **MIUI 14.0.13 (`V14.0.13.0.TMKCNXM`, Android 13)** (touch, Wi-Fi, and `/data` decryption verified on device):
+> - Rebased `devices/socrates.toml` on the official `V14.0.13.0.TMKCNXM` stock recovery, switched `os_version_prop` to `ro.build.version.incremental`, removed HyperOS-only touch sysfs nodes (`touch_thp_breakline_mode`, `touch_thp_breakline_result`), and added `/vendor/lib64/vndk` to `[wlan].libraries`.
+> - Added `com.android.vndk.current` APEX fallback and unpacked APEX directory support in `crates/skyward/src/secure.rs`.
+> - Included the `system` partition when locating `hwservicemanager` on Android 13 (`crates/skyward/src/keys.rs`), excluded `/system/bin/gatekeeperd` when selecting the Gatekeeper HAL (`crates/skyward-programs/src/secure.rs`), and allowed Android 13's `none`/`nopassword` `stretching` file in `crates/skyward-crypto/src/keystore.rs`.
+> - Configured `.github/workflows/build.yml` to build `socrates` only by default.
+> - **Do not** use the in-app "Skyward update" in Settings — upstream releases are built on HyperOS 3/4 and are not compatible with MIUI 14.0.13.
+
 <p align="center">
   <img src="assets/home.png" width="30%" alt="Home">
   <img src="assets/settings-dark.png" width="30%" alt="Settings in dark mode">
@@ -105,7 +115,7 @@ merged, super and the logical partitions in it are not flashed.
 | --- | --- | --- |
 | Xiaomi 17 Ultra | `nezha` | OS4.0.4.0.XPACNXM (Android 17) |
 | Xiaomi 13 Ultra | `ishtar` | OS3.0.308.0.WMACNXM (Android 16) |
-| REDMI K60 Pro | `socrates` | OS4.0.0.24.XMKCNXM (Android 17) |
+| REDMI K60 Pro | `socrates` | V14.0.13.0.TMKCNXM (Android 13) |
 
 ### 🚧 Under construction
 
@@ -147,10 +157,15 @@ phone's model and codename, such as Xiaomi 17 Ultra (nezha). Check it against
 the slot the phone runs from, with the phone in fastboot mode:
 
 ```sh
-unzip skyward-v0.5.1-nezha-OS4.0.4.0.XPACNXM.zip
-fastboot flash recovery skyward-v0.5.1-nezha-OS4.0.4.0.XPACNXM.img
+unzip skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.zip
+fastboot flash recovery_a skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.img
+# Optional: also flash slot B
+# fastboot flash recovery_b skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.img
 fastboot reboot recovery
 ```
+
+> [!TIP]
+> Because `socrates` uses a ramdisk-only recovery image (`kernel_size = 0`), do not use `fastboot boot`; flash it to `recovery_a` (or `recovery`) and run `fastboot reboot recovery`.
 
 Afterwards Skyward updates itself over Wi-Fi from its newest release, on the
 Skyward update page in Settings; a newer image, unzipped, also installs from its own
