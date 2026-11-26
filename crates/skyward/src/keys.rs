@@ -53,6 +53,11 @@ fn read(slot: skyward_vab::Slot, libraries: Option<&Path>) -> Result<Phone> {
     let properties = skyward_info::installed_props(slot)?;
     let mounted = skyward_vab::mounted_partitions(slot)?;
     let mut partitions = Vec::new();
+    let system_name = format!("system{}", slot.suffix());
+    if let Some(sys) = mounted.iter().find(|m| m.partition == system_name) {
+        let root = sys.mount_point.join("system");
+        partitions.push(Partition::mounted("system", if root.is_dir() { root } else { sys.mount_point.clone() }));
+    }
     for name in PARTITIONS {
         let named = format!("{name}{}", slot.suffix());
         let partition = mounted.iter().find(|m| m.partition == named).with_context(|| format!("{named} is not mounted"))?;
