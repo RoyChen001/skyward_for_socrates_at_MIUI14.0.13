@@ -108,9 +108,9 @@ server = "https://update.miui.com/updates/miotaV3.php"
 
 # Official Android 16 OTA used as the recovery ramdisk base.
 [stock]
-version = "OS3.0.304.0.WMKCNXM"
-package = "https://bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com/OS3.0.304.0.WMKCNXM/socrates-ota_full-OS3.0.304.0.WMKCNXM-user-16.0-694e581e9e.zip"
-recovery = "a1ed92db62fb0915b20309c5fe80b9181c6cf3ecef7d76e68503a2e1e9ff8c88"
+version = "V14.0.13.0.TMKCNXM"
+package = "https://bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com/V14.0.13.0.TMKCNXM/miui_SOCRATES_V14.0.13.0.TMKCNXM_12a3a4b29f_13.0.zip"
+recovery = "dd7ad4e77598203f146bd58ab38806c0baadf4f1bf8aa5c90d8a3db0de2328aa"
 
 # qcom-hv-haptics, which says the motor's resonant frequency in
 # lra_frequency_hz as on the 13 Ultra. The click is made from samples at
