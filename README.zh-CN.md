@@ -6,6 +6,16 @@
 
 Skyward 是使用 Rust 编写的 recovery，从零开始编写。
 
+> [!NOTE]
+> **REDMI K60 Pro（`socrates`）— MIUI 14.0.13（Android 13）适配分支**
+>
+> 本仓库基于 [kirklin/skyward](https://github.com/kirklin/skyward) 修改，专为运行 **MIUI 14.0.13（`V14.0.13.0.TMKCNXM`，Android 13）** 的 **REDMI K60 Pro（`socrates`）** 适配构建，已实机验证**触控、Wi-Fi 与 `/data` 分区密码解密**均正常工作：
+> - 将 `devices/socrates.toml` 切换为官方 `V14.0.13.0.TMKCNXM` 原厂 recovery 底包，`os_version_prop` 改为 `ro.build.version.incremental`，移除 MIUI 14 驱动不存在的 `touch_thp_breakline_mode` / `touch_thp_breakline_result` 节点，并在 `[wlan].libraries` 中补充 `/vendor/lib64/vndk`。
+> - 在 `crates/skyward/src/secure.rs` 中增加 `com.android.vndk.current` APEX 回退挂载及目录形式 APEX 兼容。
+> - 在 `crates/skyward/src/keys.rs` 中纳入 `system` 分区以识别 Android 13 的 `hwservicemanager`，在 `crates/skyward-programs/src/secure.rs` 中排除 `/system/bin/gatekeeperd` 避免与 Gatekeeper HAL 冲突，并在 `crates/skyward-crypto/src/keystore.rs` 中放行 Android 13 密钥目录下的 `none` / `nopassword` `stretching` 文件。
+> - 将 `.github/workflows/build.yml` 设为默认仅构建 `socrates`。
+> - **请勿**在 Skyward 设置中使用“Skyward 在线更新”，上游官方 Release 基于 HyperOS 3/4 构建，刷入后会与 MIUI 14.0.13 不兼容。
+
 <p align="center">
   <img src="assets/home.png" width="30%" alt="首页">
   <img src="assets/settings-dark.png" width="30%" alt="深色模式下的设置">
@@ -90,7 +100,7 @@ Skyward 是使用 Rust 编写的 recovery，从零开始编写。
 | --- | --- | --- |
 | 小米 17 Ultra | `nezha` | OS4.0.4.0.XPACNXM（Android 17） |
 | 小米 13 Ultra | `ishtar` | OS3.0.308.0.WMACNXM（Android 16） |
-| REDMI K60 Pro | `socrates` | OS4.0.0.24.XMKCNXM（Android 17） |
+| REDMI K60 Pro | `socrates` | V14.0.13.0.TMKCNXM（Android 13） |
 
 ### 🚧 施工中
 
@@ -123,10 +133,15 @@ Skyward 是使用 Rust 编写的 recovery，从零开始编写。
 Skyward 需要已解锁的 bootloader。从 [Releases](https://github.com/kirklin/skyward/releases) 下载对应机型的 zip，每个文件都标有机型和代号，例如 Xiaomi 17 Ultra (nezha)。使用 `SHA256SUMS` 核对并解压之后，在手机处于 fastboot 模式的时候，把其中的镜像刷入当前运行槽位的 recovery 分区：
 
 ```sh
-unzip skyward-v0.5.1-nezha-OS4.0.4.0.XPACNXM.zip
-fastboot flash recovery skyward-v0.5.1-nezha-OS4.0.4.0.XPACNXM.img
+unzip skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.zip
+fastboot flash recovery_a skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.img
+# 可选：同时刷入 B 槽
+# fastboot flash recovery_b skyward-<commit>-socrates-V14.0.13.0.TMKCNXM.img
 fastboot reboot recovery
 ```
+
+> [!TIP]
+> `socrates` 的 recovery 镜像为纯 ramdisk（不含内核），请勿使用 `fastboot boot`，需直接刷入 `recovery_a`（或 `recovery`）分区后执行 `fastboot reboot recovery`。
 
 之后连接 WLAN，就可以在“设置”的“Skyward 更新”页面更新到最新版本，也可以在 Skyward 自己的“安装”页面安装解压出来的新版镜像。打开 **自动重新刷入 Skyward** 之后，系统更新或者刷机包覆盖 recovery 分区的时候，Skyward 会重新刷回这些分区。
 
