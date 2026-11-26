@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       device:
-        description: The codename of the one device to build for; every device when empty
+        description: The codename of the one device to build for
         required: false
-        default: ""
+        default: "socrates"
 
 permissions:
   contents: read
@@ -95,14 +95,10 @@ jobs:
       - uses: actions/checkout@v7
       - id: list
         env:
-          DEVICE: ${{ inputs.device }}
+          DEVICE: ${{ inputs.device || 'socrates' }}
         run: |
-          if [ -n "$DEVICE" ]; then
-            test -f "devices/$DEVICE.toml"
-            echo "devices=$(jq -nc --arg device "$DEVICE" '[$device]')" >> "$GITHUB_OUTPUT"
-          else
-            echo "devices=$(basename -s .toml devices/*.toml | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
-          fi
+          test -f "devices/$DEVICE.toml"
+          echo "devices=$(jq -nc --arg device "$DEVICE" '[$device]')" >> "$GITHUB_OUTPUT"
 
   recovery:
     name: Recovery for ${{ matrix.device }}
