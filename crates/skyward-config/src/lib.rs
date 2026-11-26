@@ -971,7 +971,7 @@ mod tests {
         let [settings, address] = &wlan.firmware[..] else { panic!("its settings and its MAC address") };
         assert!(!settings.optional, "the driver does not start without its settings");
         assert_eq!((address.partition.as_deref(), address.path.as_str(), address.optional), (Some("persist"), "kiwi_v2/wlan_mac.bin", true));
-        let required = Wlan { firmware: vec![settings.clone(), Firmware { optional: false, ..address.clone() }], ..wlan.clone() };
+        let required = Wlan {firmware: vec![settings.clone(), Firmware { optional: false, ..address.clone() }],libraries: ishtar.libraries.clone(),..wlan.clone()};
         assert_eq!(required, ishtar, "the 13 Ultra's chip, driven the same");
         assert_eq!(cfg.update.expect("its update server is known").server, "https://update.miui.com/updates/miotaV3.php");
     }
