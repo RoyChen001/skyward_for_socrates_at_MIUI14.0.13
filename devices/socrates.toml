@@ -58,8 +58,6 @@ paths = [
     "/sys/class/touch/touch_dev/touch_thp_testmode",
     "/sys/class/touch/touch_dev/touch_thp_testresult",
     "/sys/class/touch/touch_dev/touch_thp_preset_point",
-    "/sys/class/touch/touch_dev/touch_thp_breakline_mode",
-    "/sys/class/touch/touch_dev/touch_thp_breakline_result",
     "/sys/class/touch/touch_dev/touch_doze_analysis",
     "/sys/class/touch/touch_dev/touch_thp_cmd_ready",
     "/sys/class/touch/touch_dev/touch_ic_buffer",
@@ -98,7 +96,7 @@ firmware = [
 ]
 interface = "wlan0"
 supplicant = "/vendor/bin/hw/wpa_supplicant"
-libraries = ["/vendor/lib64", "/system/lib64"]
+libraries = ["/vendor/lib64", "/vendor/lib64/vndk", "/system/lib64"]
 service = "android.hardware.wifi.supplicant.ISupplicant/default"
 probe = "http://connect.rom.miui.com/generate_204"
 
